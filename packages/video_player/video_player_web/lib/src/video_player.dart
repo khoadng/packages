@@ -51,6 +51,8 @@ class VideoPlayer {
 
   bool _isInitialized = false;
   bool _isBuffering = false;
+  int? _firstFrameCallback;
+  bool _isDisposed = false;
 
   /// Returns the [Stream] of [VideoEvent]s from the inner [web.HTMLVideoElement].
   Stream<VideoEvent> get events => _eventController.stream;
@@ -69,6 +71,14 @@ class VideoPlayer {
   ///
   /// The `src` parameter is nullable for testing purposes.
   void initialize({String? src}) {
+    _firstFrameCallback = _videoElement.requestVideoFrameCallback(
+      ((double now, JSObject metadata) {
+        _firstFrameCallback = null;
+        if (!_isDisposed) {
+          _eventController.add(VideoEvent(eventType: VideoEventType.firstFrameRendered));
+        }
+      }).toJS,
+    );
     _videoElement
       ..autoplay = false
       ..controls = false
@@ -279,6 +289,11 @@ class VideoPlayer {
 
   /// Disposes of the current [web.HTMLVideoElement].
   void dispose() {
+    _isDisposed = true;
+    if (_firstFrameCallback case final callback?) {
+      _videoElement.cancelVideoFrameCallback(callback);
+      _firstFrameCallback = null;
+    }
     _videoElement.removeAttribute('src');
     if (_onContextMenu != null) {
       _videoElement.removeEventListener('contextmenu', _onContextMenu);

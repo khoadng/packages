@@ -155,6 +155,7 @@ class VideoPlayerValue {
     this.captionOffset = Duration.zero,
     this.buffered = const <platform_interface.DurationRange>[],
     this.isInitialized = false,
+    this.hasRenderedFirstFrame = false,
     this.isPlaying = false,
     this.isLooping = false,
     this.isBuffering = false,
@@ -241,6 +242,10 @@ class VideoPlayerValue {
   /// Indicates whether or not the video has been loaded and is ready to play.
   final bool isInitialized;
 
+  /// Whether this player's output surface has rendered its first video frame.
+  /// Remains true when paused, seeking, or buffering after the first frame.
+  final bool hasRenderedFirstFrame;
+
   /// Indicates whether or not the video is in an error state. If this is true
   /// [errorDescription] should have information about the problem.
   bool get hasError => errorDescription != null;
@@ -272,6 +277,7 @@ class VideoPlayerValue {
     Duration? captionOffset,
     List<platform_interface.DurationRange>? buffered,
     bool? isInitialized,
+    bool? hasRenderedFirstFrame,
     bool? isPlaying,
     bool? isLooping,
     bool? isBuffering,
@@ -290,6 +296,7 @@ class VideoPlayerValue {
       captionOffset: captionOffset ?? this.captionOffset,
       buffered: buffered ?? this.buffered,
       isInitialized: isInitialized ?? this.isInitialized,
+      hasRenderedFirstFrame: hasRenderedFirstFrame ?? this.hasRenderedFirstFrame,
       isPlaying: isPlaying ?? this.isPlaying,
       isLooping: isLooping ?? this.isLooping,
       isBuffering: isBuffering ?? this.isBuffering,
@@ -315,6 +322,7 @@ class VideoPlayerValue {
         'captionOffset: $captionOffset, '
         'buffered: [${buffered.join(', ')}], '
         'isInitialized: $isInitialized, '
+        'hasRenderedFirstFrame: $hasRenderedFirstFrame, '
         'isPlaying: $isPlaying, '
         'isLooping: $isLooping, '
         'isBuffering: $isBuffering, '
@@ -344,6 +352,7 @@ class VideoPlayerValue {
           size == other.size &&
           rotationCorrection == other.rotationCorrection &&
           isInitialized == other.isInitialized &&
+          hasRenderedFirstFrame == other.hasRenderedFirstFrame &&
           isCompleted == other.isCompleted &&
           preventsDisplaySleepDuringVideoPlayback == other.preventsDisplaySleepDuringVideoPlayback;
 
@@ -363,6 +372,7 @@ class VideoPlayerValue {
     size,
     rotationCorrection,
     isInitialized,
+    hasRenderedFirstFrame,
     isCompleted,
     preventsDisplaySleepDuringVideoPlayback,
   );
@@ -632,6 +642,8 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       }
 
       switch (event.eventType) {
+        case platform_interface.VideoEventType.firstFrameRendered:
+          value = value.copyWith(hasRenderedFirstFrame: true);
         case platform_interface.VideoEventType.initialized:
           value = value.copyWith(
             duration: event.duration,

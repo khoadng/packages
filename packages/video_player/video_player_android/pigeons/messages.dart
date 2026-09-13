@@ -251,3 +251,9 @@ abstract class VideoPlayerInstanceApi {
 abstract class VideoEventChannel {
   PlatformVideoEvent videoEvents();
 }
+
+/// Sent after ExoPlayer renders the first frame to its output surface.
+class FirstFrameRenderedEvent extends PlatformVideoEvent {
+  /// Monotonic system time when the renderer reported the frame, in milliseconds.
+  late final int renderTimeMs;
+}

@@ -828,6 +828,43 @@ class NativeVideoTrackData {
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
 }
 
+/// Sent after ExoPlayer renders the first frame to its output surface.
+class FirstFrameRenderedEvent extends PlatformVideoEvent {
+  FirstFrameRenderedEvent({required this.renderTimeMs});
+
+  /// Monotonic system time when the renderer reported the frame, in milliseconds.
+  int renderTimeMs;
+
+  List<Object?> _toList() {
+    return <Object?>[renderTimeMs];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static FirstFrameRenderedEvent decode(Object result) {
+    result as List<Object?>;
+    return FirstFrameRenderedEvent(renderTimeMs: result[0]! as int);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! FirstFrameRenderedEvent || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(renderTimeMs, other.renderTimeMs);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+}
+
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -883,6 +920,9 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is NativeVideoTrackData) {
       buffer.putUint8(144);
       writeValue(buffer, value.encode());
+    } else if (value is FirstFrameRenderedEvent) {
+      buffer.putUint8(145);
+      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -925,6 +965,8 @@ class _PigeonCodec extends StandardMessageCodec {
         return ExoPlayerVideoTrackData.decode(readValue(buffer)!);
       case 144:
         return NativeVideoTrackData.decode(readValue(buffer)!);
+      case 145:
+        return FirstFrameRenderedEvent.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }

@@ -1,3 +1,7 @@
+## 2.13.0+boorusama.1
+
+* Expose rendered first-frame readiness separately from playback state.
+
 ## 2.13.0
 
 * Adds `preventsDisplaySleepDuringVideoPlayback` to `VideoPlayerOptions` and

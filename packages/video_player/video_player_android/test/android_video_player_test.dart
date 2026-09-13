@@ -714,7 +714,14 @@ void main() {
         );
       });
 
-      test('playback start', () async {
+      test('rendered first frame', () async {
+        final Stream<VideoEvent> eventStream = mockPlayerEmitingEvents(<PlatformVideoEvent>[
+          FirstFrameRenderedEvent(renderTimeMs: 100),
+        ]);
+        expect(eventStream, emits(VideoEvent(eventType: VideoEventType.firstFrameRendered)));
+      });
+
+      test('playing state is forwarded independently of rendered frames', () async {
         final Stream<VideoEvent> eventStream = mockPlayerEmitingEvents(<PlatformVideoEvent>[
           IsPlayingStateEvent(isPlaying: true),
         ]);

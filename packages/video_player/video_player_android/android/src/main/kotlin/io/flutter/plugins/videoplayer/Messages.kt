@@ -947,6 +947,46 @@ data class NativeVideoTrackData(
   }
 }
 
+/**
+ * Sent after ExoPlayer renders the first frame to its output surface.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class FirstFrameRenderedEvent(
+    /** Monotonic system time when the renderer reported the frame, in milliseconds. */
+    val renderTimeMs: Long
+) : PlatformVideoEvent() {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): FirstFrameRenderedEvent {
+      val renderTimeMs = pigeonVar_list[0] as Long
+      return FirstFrameRenderedEvent(renderTimeMs)
+    }
+  }
+
+  fun toList(): List<Any?> {
+    return listOf(
+        renderTimeMs,
+    )
+  }
+
+  override fun equals(other: Any?): Boolean {
+    if (other == null || other.javaClass != javaClass) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    val other = other as FirstFrameRenderedEvent
+    return MessagesPigeonUtils.deepEquals(this.renderTimeMs, other.renderTimeMs)
+  }
+
+  override fun hashCode(): Int {
+    var result = javaClass.hashCode()
+    result = 31 * result + MessagesPigeonUtils.deepHash(this.renderTimeMs)
+    return result
+  }
+}
+
 private open class MessagesPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
@@ -999,6 +1039,9 @@ private open class MessagesPigeonCodec : StandardMessageCodec() {
       }
       144.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { NativeVideoTrackData.fromList(it) }
+      }
+      145.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let { FirstFrameRenderedEvent.fromList(it) }
       }
       else -> super.readValueOfType(type, buffer)
     }
@@ -1068,6 +1111,10 @@ private open class MessagesPigeonCodec : StandardMessageCodec() {
       }
       is NativeVideoTrackData -> {
         stream.write(144)
+        writeValue(stream, value.toList())
+      }
+      is FirstFrameRenderedEvent -> {
+        stream.write(145)
         writeValue(stream, value.toList())
       }
       else -> super.writeValue(stream, value)

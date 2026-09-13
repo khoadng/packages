@@ -60,6 +60,11 @@ final class VideoPlayerEventCallbacks implements VideoPlayerCallbacks {
   }
 
   @Override
+  public void onRenderedFirstFrame() {
+    eventSink.success(new FirstFrameRenderedEvent(android.os.SystemClock.elapsedRealtime()));
+  }
+
+  @Override
   public void onIsPlayingStateUpdate(boolean isPlaying) {
     eventSink.success(new IsPlayingStateEvent(isPlaying));
   }

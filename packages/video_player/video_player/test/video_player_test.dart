@@ -1030,13 +1030,11 @@ void main() {
         }
 
         expect(isSorted, false, reason: 'Expected captions to be unsorted');
-        expect(captions.map((Caption c) => c.text).toList(), <String>[
-          'one',
-          'two',
-          'three',
-          'five',
-          'four',
-        ], reason: 'Captions should be in original unsorted order');
+        expect(
+          captions.map((Caption c) => c.text).toList(),
+          <String>['one', 'two', 'three', 'five', 'four'],
+          reason: 'Captions should be in original unsorted order',
+        );
       });
 
       test('works when seeking, includes all captions', () async {
@@ -1447,6 +1445,29 @@ void main() {
     });
 
     group('Platform callbacks', () {
+      testWidgets('first frame is independent of initialization and playback', (tester) async {
+        final controller = VideoPlayerController.networkUrl(_localhostUri);
+        await controller.initialize();
+        final StreamController<VideoEvent> events =
+            fakeVideoPlayerPlatform.streams[controller.playerId]!;
+        expect(controller.value.hasRenderedFirstFrame, isFalse);
+        events.add(VideoEvent(eventType: VideoEventType.isPlayingStateUpdate, isPlaying: true));
+        await tester.pump();
+        expect(controller.value.hasRenderedFirstFrame, isFalse);
+        events.add(VideoEvent(eventType: VideoEventType.firstFrameRendered));
+        await tester.pump();
+        expect(controller.value.hasRenderedFirstFrame, isTrue);
+        events.add(VideoEvent(eventType: VideoEventType.bufferingStart));
+        events.add(VideoEvent(eventType: VideoEventType.isPlayingStateUpdate, isPlaying: false));
+        await tester.pump();
+        expect(controller.value.hasRenderedFirstFrame, isTrue);
+        await tester.runAsync(controller.dispose);
+        final replacement = VideoPlayerController.networkUrl(_localhostUri);
+        await replacement.initialize();
+        expect(replacement.value.hasRenderedFirstFrame, isFalse);
+        await tester.runAsync(replacement.dispose);
+      });
+
       testWidgets('playing completed', (WidgetTester tester) async {
         final controller = VideoPlayerController.networkUrl(_localhostUri);
 
@@ -1664,6 +1685,7 @@ void main() {
           'captionOffset: 0:00:00.250000, '
           'buffered: [DurationRange(start: 0:00:00.000000, end: 0:00:04.000000)], '
           'isInitialized: true, '
+          'hasRenderedFirstFrame: false, '
           'isPlaying: true, '
           'isLooping: true, '
           'isBuffering: true, '

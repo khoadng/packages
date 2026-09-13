@@ -93,6 +93,11 @@ public abstract class ExoPlayerEventListener implements Player.Listener {
   }
 
   @Override
+  public void onRenderedFirstFrame() {
+    events.onRenderedFirstFrame();
+  }
+
+  @Override
   public void onTracksChanged(@NonNull Tracks tracks) {
     // Find the currently selected audio track and notify
     String selectedAudioTrackId = findSelectedAudioTrackId(tracks);

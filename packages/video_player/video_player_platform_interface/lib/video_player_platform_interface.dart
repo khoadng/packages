@@ -368,6 +368,10 @@ class VideoEvent {
 /// Emitted by the platform implementation when the video is initialized or
 /// completed or to communicate buffering events or play state changed.
 enum VideoEventType {
+  /// A video frame has been rendered to this player's output surface.
+  /// This must not be synthesized from initialization, playback, or a timer.
+  firstFrameRendered,
+
   /// The video has been initialized.
   ///
   /// A maximum of one event of this type may be emitted per instance.

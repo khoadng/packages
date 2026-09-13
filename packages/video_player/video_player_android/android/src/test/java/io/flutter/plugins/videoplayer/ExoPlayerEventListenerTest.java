@@ -70,6 +70,13 @@ public final class ExoPlayerEventListenerTest {
   }
 
   @Test
+  public void onRenderedFirstFrameForwardsRenderingEvent() {
+    eventListener.onRenderedFirstFrame();
+    verify(mockCallbacks).onRenderedFirstFrame();
+    verifyNoMoreInteractions(mockCallbacks);
+  }
+
+  @Test
   public void onPlaybackStateChangedEndedSendsEnded() {
     eventListener.onPlaybackStateChanged(Player.STATE_ENDED);
 

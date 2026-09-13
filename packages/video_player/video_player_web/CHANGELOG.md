@@ -3,6 +3,10 @@
 * Updates the minimum supported `package:web` version to 1.0.0.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
+## 2.4.0+boorusama.1
+
+* Report the first composited video frame using requestVideoFrameCallback.
+
 ## 2.4.0
 
 * Adds HTML5 video poster support as a VideoPlayerWebOptions.

@@ -528,6 +528,8 @@ class _PlayerInstance {
 
   void _onStreamEvent(PlatformVideoEvent event) {
     switch (event) {
+      case FirstFrameRenderedEvent _:
+        _eventStreamController.add(VideoEvent(eventType: VideoEventType.firstFrameRendered));
       case InitializationEvent _:
         _eventStreamController.add(
           VideoEvent(

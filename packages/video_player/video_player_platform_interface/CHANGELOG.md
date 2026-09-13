@@ -1,3 +1,7 @@
+## 6.9.0+boorusama.1
+
+* Add a first-frame-rendered event for video output readiness.
+
 ## 6.9.0
 
 * Adds `backBufferDurationMs` to `VideoPlayerOptions` to support configuring the back buffer duration.

@@ -1,3 +1,7 @@
+## 2.11.0+boorusama.1
+
+* Forward ExoPlayer's rendered-first-frame callback.
+
 ## 2.11.0
 
 * Adds `backBufferDurationMs` to `CreationOptions` to configure ExoPlayer `DefaultLoadControl` back buffer duration.
