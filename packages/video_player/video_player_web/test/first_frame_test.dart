@@ -28,7 +28,7 @@ void main() {
     }).toJS;
     final player = VideoPlayer(videoElement: video);
     final events = <VideoEvent>[];
-    final subscription = player.events.listen(events.add);
+    final StreamSubscription<VideoEvent> subscription = player.events.listen(events.add);
     player.initialize();
     video.dispatchEvent(web.Event('play'));
     await Future<void>.delayed(Duration.zero);
@@ -45,7 +45,9 @@ void main() {
 
     final replacement = VideoPlayer(videoElement: video);
     final lateEvents = <VideoEvent>[];
-    final replacementSubscription = replacement.events.listen(lateEvents.add);
+    final StreamSubscription<VideoEvent> replacementSubscription = replacement.events.listen(
+      lateEvents.add,
+    );
     replacement.initialize();
     replacement.dispose();
     expect(cancelled, 7);
